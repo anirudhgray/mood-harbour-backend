@@ -8,6 +8,7 @@ import (
 	"math"
 	"math/big"
 	"net/http"
+	"time"
 
 	"github.com/anirudhgray/mood-harbour-backend/infra/logger"
 	"github.com/anirudhgray/mood-harbour-backend/models"
@@ -51,6 +52,8 @@ type GenericEmail struct {
 type EmailServiceInterface interface {
 	GenericSendMail(subject string, content string, toEmail string, userName string) error
 	SendRegistrationMail(subject string, content string, toEmail string, userID uint, userName string, newUser bool) error
+	SendForgotPasswordMail(toEmail string, userID uint, userName string) error
+	SendDeletionMail(toEmail string, userID uint, userName string) error
 }
 
 func (es *EmailService) SendRegistrationMail(subject string, content string, toEmail string, userID uint, userName string, newUser bool) error {
@@ -122,5 +125,51 @@ func (es *EmailService) GenericSendMail(subject string, content string, toEmail 
 	}
 
 	defer res.Body.Close()
+	return nil
+}
+
+func (es *EmailService) SendForgotPasswordMail(toEmail string, userID uint, userName string) error {
+	otp := ""
+	otp = GenerateOTP(6)
+	verificationURL := ""
+	verificationURL += "http://bookstore.anrdhmshr.tech/set-forgotten-password?email=" + toEmail + "&otp=" + otp
+	content := "A forgot password request was made for the email associated with your account. If this was not you, feel free to ignore this email. Otherwise, click on this link to post your new password: " + verificationURL + " . This link will be active for 3 minutes."
+	subject := "Forgot Password."
+
+	err := es.GenericSendMail(subject, content, toEmail, userName)
+	if err != nil {
+		return err
+	}
+
+	entry := models.ForgotPassword{
+		Email:     toEmail,
+		OTP:       otp,
+		ValidTill: time.Now().Add(3 * time.Minute),
+	}
+	forgotRepo := repository.NewForgotPasswordRepository()
+	forgotRepo.CreateForgotPassword(entry)
+	return nil
+}
+
+func (es EmailService) SendDeletionMail(toEmail string, userID uint, userName string) error {
+	otp := ""
+	otp = GenerateOTP(6)
+	confirmationURL := ""
+	confirmationURL += "http://bookstore.anrdhmshr.tech/delete-account?email=" + toEmail + "&otp=" + otp
+	content := "A request for the deletion of the bookstore account associated with your user has been made. If this was not you, please change your password. Otherwise, click on this link to confirm account deletion: " + confirmationURL + " . This link will be active for 3 minutes."
+	subject := "Request for account deletion."
+
+	err := es.GenericSendMail(subject, content, toEmail, userName)
+	if err != nil {
+		return err
+	}
+
+	entry := models.DeletionConfirmation{
+		Email:     toEmail,
+		OTP:       otp,
+		ValidTill: time.Now().Add(3 * time.Minute),
+	}
+	deletionRepo := repository.NewDeletionConfirmationRepository()
+	deletionRepo.CreateDeletionConfirmation(entry)
 	return nil
 }

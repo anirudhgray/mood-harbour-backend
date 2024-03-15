@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"time"
 
 	"github.com/anirudhgray/mood-harbour-backend/infra/logger"
 	"github.com/anirudhgray/mood-harbour-backend/models"
@@ -45,6 +46,12 @@ type AuthServiceInterface interface {
 	RegisterUser(email, name, profileImage, password string) (models.User, error)
 	LoginUser(email, password string) (string, models.User, error)
 	RequestVerificationAgain(email string) error
+	VerifyEmail(email, otp string) error
+	ForgotPasswordRequest(email string) error
+	SetNewPassword(email string, otp string, newPassword string) error
+	ResetPassword(user models.User, oldPassword string, newPassword string) error
+	RequestDeletion(user models.User) error
+	DeleteAccount(email string, otp string) error
 }
 
 func (as *AuthService) RegisterUser(email, name, profileImage, password string) (models.User, error) {
@@ -136,6 +143,205 @@ func (as *AuthService) RequestVerificationAgain(email string) error {
 
 	// Send verification email
 	err = as.emailService.SendRegistrationMail("Account Verification.", "Please visit the following link to verify your account: ", user.Email, user.ID, user.Name, true)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (as *AuthService) VerifyEmail(email string, otp string) error {
+	// Fetch the verification entry by email
+	verificationEntry, err := as.verificationRepo.GetVerificationEntryByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	if verificationEntry.OTP != otp {
+		return errors.New("Invalid verification")
+	}
+
+	// Verify the email by updating the user's verification status
+	err = as.userRepo.VerifyUserEmail(email)
+	if err != nil {
+		return err
+	}
+
+	// Delete the verification entry
+	err = as.verificationRepo.DeleteVerificationEntry(email)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (as *AuthService) ForgotPasswordRequest(email string) error {
+	// Fetch the user by email
+	user, err := as.userRepo.GetUserByEmail(email)
+	if err != nil {
+		return nil
+	}
+
+	// Check if a forgot password entry already exists for the user's email
+	err = as.forgotRepo.DeleteForgotPasswordByEmail(user.Email)
+	if err != nil {
+		return nil
+	}
+
+	// Send the forgot password email
+	err = as.emailService.SendForgotPasswordMail(user.Email, user.ID, user.Name)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (as *AuthService) SetNewPassword(email string, otp string, newPassword string) error {
+	// Fetch the forgot password entry by email
+	forgotPasswordEntry, err := as.forgotRepo.GetForgotPasswordByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	if forgotPasswordEntry.ValidTill.Before(time.Now()) {
+		return errors.New("Password OTP has expired, please request forgot password again")
+	}
+
+	if forgotPasswordEntry.OTP != otp {
+		return errors.New("Invalid verification")
+	}
+
+	// Fetch the user by email
+	user, err := as.userRepo.GetUserByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	pwdAuth, err := as.passwordAuthRepo.GetPwdAuthItemByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	if !auth.CheckPasswordStrength(newPassword) {
+		return errors.New("Password not strong enough")
+	}
+
+	pwdAuth.Password = newPassword
+	pwdAuth.HashPassword()
+
+	err = as.userRepo.SaveUser(user)
+	if err != nil {
+		return err
+	}
+
+	err = as.passwordAuthRepo.UpdatePwdAuthItem(pwdAuth)
+	if err != nil {
+		return err
+	}
+
+	as.emailService.GenericSendMail("Password Reset", "Password for your account was reset recently.", user.Email, user.Name)
+
+	// Delete the forgot password entry
+	err = as.forgotRepo.DeleteForgotPasswordByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (as *AuthService) ResetPassword(user models.User, oldPassword string, newPassword string) error {
+	// Fetch the password auth item by email
+	currentPwdAuth, err := as.passwordAuthRepo.GetPwdAuthItemByEmail(user.Email)
+	if err != nil {
+		return err
+	}
+
+	if err := auth.VerifyPassword(oldPassword, currentPwdAuth.Password); err != nil {
+		as.emailService.GenericSendMail("Password Reset Attempt", "Somebody attempted to change your password. Secure your account if this was not you.", user.Email, user.Name)
+		return errors.New("Incorrect current password")
+	}
+
+	if !auth.CheckPasswordStrength(newPassword) {
+		return errors.New("Password not strong enough")
+	}
+
+	currentPwdAuth.Password = newPassword
+	currentPwdAuth.HashPassword()
+
+	err = as.userRepo.SaveUser(user)
+	if err != nil {
+		return err
+	}
+
+	err = as.passwordAuthRepo.UpdatePwdAuthItem(currentPwdAuth)
+	if err != nil {
+		return err
+	}
+
+	as.emailService.GenericSendMail("Password Reset Successfully", "Your password was changed. Secure your account if this was not you.", user.Email, user.Name)
+
+	return nil
+}
+
+func (as *AuthService) RequestDeletion(user models.User) error {
+	// Check if a deletion confirmation record already exists for the user's email, and remove it
+	err := as.deletionRepo.DeleteDeletionConfirmationByEmail(user.Email)
+	if err != nil {
+		return err
+	}
+
+	// Send deletion email
+	err = as.emailService.SendDeletionMail(user.Email, user.ID, user.Name)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (as *AuthService) DeleteAccount(email string, otp string) error {
+	// Fetch the deletion confirmation entry by email
+	deletionEntry, err := as.deletionRepo.GetDeletionConfirmationByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	if deletionEntry.ValidTill.Before(time.Now()) {
+		return errors.New("Password OTP has expired, please request account deletion again")
+	}
+
+	if deletionEntry.OTP != otp {
+		return errors.New("Invalid verification")
+	}
+
+	// Fetch the user by email
+	user, err := as.userRepo.GetUserByEmail(email)
+	if err != nil {
+		return err
+	}
+
+	err = as.userRepo.DeleteUserByID(user.ID)
+	if err != nil {
+		return err
+	}
+
+	err = as.passwordAuthRepo.DeletePwdAuthItemByEmail(user.Email)
+	if err != nil {
+		return err
+	}
+
+	err = as.authProviderRepo.DeleteAuthProviderByUserID(user.ID)
+	if err != nil {
+		return err
+	}
+
+	as.emailService.GenericSendMail("Account Deleted", "Your account on GDSC Attendance App has been deleted.", user.Email, user.Name)
+
+	// Delete the deletion request entry
+	err = as.deletionRepo.DeleteDeletionConfirmationByEmail(email)
 	if err != nil {
 		return err
 	}
