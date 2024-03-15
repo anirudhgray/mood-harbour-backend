@@ -48,7 +48,7 @@ func GenericSendMail(subject string, content string, toEmail string, userName st
 		Subject: subject,
 		From: EmailAddress{
 			Email: "attapp@anrdhmshr.tech",
-			Name:  "Attendance App",
+			Name:  "Mood App",
 		},
 		To: []EmailAddress{
 			{
@@ -56,7 +56,7 @@ func GenericSendMail(subject string, content string, toEmail string, userName st
 				Name:  userName,
 			},
 		},
-		Category: "AttendanceApp",
+		Category: "MoodApp",
 		Text:     content,
 	}
 

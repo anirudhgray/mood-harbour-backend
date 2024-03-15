@@ -51,12 +51,12 @@ type GenericEmail struct {
 
 type EmailServiceInterface interface {
 	GenericSendMail(subject string, content string, toEmail string, userName string) error
-	SendRegistrationMail(subject string, content string, toEmail string, userID uint, userName string, newUser bool) error
-	SendForgotPasswordMail(toEmail string, userID uint, userName string) error
-	SendDeletionMail(toEmail string, userID uint, userName string) error
+	SendRegistrationMail(subject string, content string, toEmail string, userName string, newUser bool) error
+	SendForgotPasswordMail(toEmail string, userName string) error
+	SendDeletionMail(toEmail string, userName string) error
 }
 
-func (es *EmailService) SendRegistrationMail(subject string, content string, toEmail string, userID uint, userName string, newUser bool) error {
+func (es *EmailService) SendRegistrationMail(subject string, content string, toEmail string, userName string, newUser bool) error {
 	otp := ""
 	if newUser {
 		otp = GenerateOTP(6)
@@ -88,7 +88,7 @@ func (es *EmailService) GenericSendMail(subject string, content string, toEmail 
 		Subject: subject,
 		From: EmailAddress{
 			Email: "attapp@anrdhmshr.tech",
-			Name:  "Attendance App",
+			Name:  "Mood App",
 		},
 		To: []EmailAddress{
 			{
@@ -96,7 +96,7 @@ func (es *EmailService) GenericSendMail(subject string, content string, toEmail 
 				Name:  userName,
 			},
 		},
-		Category: "AttendanceApp",
+		Category: "MoodApp",
 		Text:     content,
 	}
 
@@ -128,7 +128,7 @@ func (es *EmailService) GenericSendMail(subject string, content string, toEmail 
 	return nil
 }
 
-func (es *EmailService) SendForgotPasswordMail(toEmail string, userID uint, userName string) error {
+func (es *EmailService) SendForgotPasswordMail(toEmail string, userName string) error {
 	otp := ""
 	otp = GenerateOTP(6)
 	verificationURL := ""
@@ -151,7 +151,7 @@ func (es *EmailService) SendForgotPasswordMail(toEmail string, userID uint, user
 	return nil
 }
 
-func (es EmailService) SendDeletionMail(toEmail string, userID uint, userName string) error {
+func (es EmailService) SendDeletionMail(toEmail string, userName string) error {
 	otp := ""
 	otp = GenerateOTP(6)
 	confirmationURL := ""

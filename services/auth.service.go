@@ -85,7 +85,7 @@ func (as *AuthService) RegisterUser(email, name, profileImage, password string) 
 			logger.Errorf("Failed to create user: %v", err)
 			return models.User{}, err
 		}
-		as.emailService.SendRegistrationMail("Account Verification.", "Please visit the following link to verify your account: ", user.Email, user.ID, user.Name, true)
+		as.emailService.SendRegistrationMail("Account Verification.", "Please visit the following link to verify your account: ", user.Email, user.Name, true)
 		logger.Infof("New User Object Created.")
 		u, _ := as.userRepo.GetUserByEmail(email)
 		pwdauth.UserID = u.ID
@@ -142,7 +142,7 @@ func (as *AuthService) RequestVerificationAgain(email string) error {
 	}
 
 	// Send verification email
-	err = as.emailService.SendRegistrationMail("Account Verification.", "Please visit the following link to verify your account: ", user.Email, user.ID, user.Name, true)
+	err = as.emailService.SendRegistrationMail("Account Verification.", "Please visit the following link to verify your account: ", user.Email, user.Name, true)
 	if err != nil {
 		return err
 	}
@@ -190,7 +190,7 @@ func (as *AuthService) ForgotPasswordRequest(email string) error {
 	}
 
 	// Send the forgot password email
-	err = as.emailService.SendForgotPasswordMail(user.Email, user.ID, user.Name)
+	err = as.emailService.SendForgotPasswordMail(user.Email, user.Name)
 	if err != nil {
 		return err
 	}
@@ -294,7 +294,7 @@ func (as *AuthService) RequestDeletion(user models.User) error {
 	}
 
 	// Send deletion email
-	err = as.emailService.SendDeletionMail(user.Email, user.ID, user.Name)
+	err = as.emailService.SendDeletionMail(user.Email, user.Name)
 	if err != nil {
 		return err
 	}
@@ -338,7 +338,7 @@ func (as *AuthService) DeleteAccount(email string, otp string) error {
 		return err
 	}
 
-	as.emailService.GenericSendMail("Account Deleted", "Your account on GDSC Attendance App has been deleted.", user.Email, user.Name)
+	as.emailService.GenericSendMail("Account Deleted", "Your account on  Mood App has been deleted.", user.Email, user.Name)
 
 	// Delete the deletion request entry
 	err = as.deletionRepo.DeleteDeletionConfirmationByEmail(email)
