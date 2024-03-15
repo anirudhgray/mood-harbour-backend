@@ -3,11 +3,11 @@ package main
 import (
 	"time"
 
-	"github.com/GDGVIT/attendance-app-backend/config"
-	"github.com/GDGVIT/attendance-app-backend/infra/database"
-	"github.com/GDGVIT/attendance-app-backend/infra/logger"
-	"github.com/GDGVIT/attendance-app-backend/migrations"
-	"github.com/GDGVIT/attendance-app-backend/routers"
+	"github.com/anirudhgray/mood-harbour-backend/config"
+	"github.com/anirudhgray/mood-harbour-backend/infra/database"
+	"github.com/anirudhgray/mood-harbour-backend/infra/logger"
+	"github.com/anirudhgray/mood-harbour-backend/migrations"
+	"github.com/anirudhgray/mood-harbour-backend/routers"
 	"github.com/spf13/viper"
 )
 

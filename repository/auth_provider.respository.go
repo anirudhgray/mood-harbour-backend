@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"github.com/GDGVIT/attendance-app-backend/infra/database"
-	"github.com/GDGVIT/attendance-app-backend/models" // Import your model package
+	"github.com/anirudhgray/mood-harbour-backend/infra/database"
+	"github.com/anirudhgray/mood-harbour-backend/models" // Import your model package
 	"gorm.io/gorm"
 )
 

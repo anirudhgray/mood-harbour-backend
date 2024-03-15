@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/GDGVIT/attendance-app-backend/models"
+	"github.com/anirudhgray/mood-harbour-backend/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/spf13/viper"

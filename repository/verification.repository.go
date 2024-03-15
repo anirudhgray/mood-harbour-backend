@@ -3,9 +3,9 @@
 package repository
 
 import (
-	"github.com/GDGVIT/attendance-app-backend/infra/database"
-	"github.com/GDGVIT/attendance-app-backend/infra/logger"
-	"github.com/GDGVIT/attendance-app-backend/models"
+	"github.com/anirudhgray/mood-harbour-backend/infra/database"
+	"github.com/anirudhgray/mood-harbour-backend/infra/logger"
+	"github.com/anirudhgray/mood-harbour-backend/models"
 	"gorm.io/gorm"
 )
 

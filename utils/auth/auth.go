@@ -3,9 +3,9 @@ package auth
 import (
 	"unicode"
 
-	"github.com/GDGVIT/attendance-app-backend/models"
-	"github.com/GDGVIT/attendance-app-backend/repository"
-	"github.com/GDGVIT/attendance-app-backend/utils/token"
+	"github.com/anirudhgray/mood-harbour-backend/models"
+	"github.com/anirudhgray/mood-harbour-backend/repository"
+	"github.com/anirudhgray/mood-harbour-backend/utils/token"
 	"golang.org/x/crypto/bcrypt"
 )
 

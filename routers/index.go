@@ -3,10 +3,10 @@ package routers
 import (
 	"net/http"
 
-	"github.com/GDGVIT/attendance-app-backend/controllers"
-	"github.com/GDGVIT/attendance-app-backend/repository"
-	"github.com/GDGVIT/attendance-app-backend/routers/middleware"
-	"github.com/GDGVIT/attendance-app-backend/services"
+	"github.com/anirudhgray/mood-harbour-backend/controllers"
+	"github.com/anirudhgray/mood-harbour-backend/repository"
+	"github.com/anirudhgray/mood-harbour-backend/routers/middleware"
+	"github.com/anirudhgray/mood-harbour-backend/services"
 	"github.com/gin-gonic/gin"
 )
 

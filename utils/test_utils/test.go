@@ -1,7 +1,7 @@
 package test_utils
 
 import (
-	"github.com/GDGVIT/attendance-app-backend/models"
+	"github.com/anirudhgray/mood-harbour-backend/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )

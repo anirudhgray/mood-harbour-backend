@@ -3,8 +3,8 @@ package repository
 import (
 	"testing"
 
-	"github.com/GDGVIT/attendance-app-backend/models"
-	"github.com/GDGVIT/attendance-app-backend/utils/test_utils"
+	"github.com/anirudhgray/mood-harbour-backend/models"
+	"github.com/anirudhgray/mood-harbour-backend/utils/test_utils"
 )
 
 func TestPasswordAuthRepository_CreatePwdAuthItem(t *testing.T) {

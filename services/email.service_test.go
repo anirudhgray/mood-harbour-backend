@@ -3,7 +3,7 @@ package services
 import (
 	"testing"
 
-	"github.com/GDGVIT/attendance-app-backend/mocks"
+	"github.com/anirudhgray/mood-harbour-backend/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )

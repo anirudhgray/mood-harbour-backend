@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"github.com/GDGVIT/attendance-app-backend/infra/database" // Import your custom database package
-	"github.com/GDGVIT/attendance-app-backend/infra/logger"
-	"github.com/GDGVIT/attendance-app-backend/models"
+	"github.com/anirudhgray/mood-harbour-backend/infra/database" // Import your custom database package
+	"github.com/anirudhgray/mood-harbour-backend/infra/logger"
+	"github.com/anirudhgray/mood-harbour-backend/models"
 	"gorm.io/gorm"
 )
 

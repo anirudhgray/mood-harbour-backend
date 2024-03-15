@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"github.com/GDGVIT/attendance-app-backend/routers/middleware"
+	"github.com/anirudhgray/mood-harbour-backend/routers/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )

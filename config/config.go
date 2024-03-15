@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/GDGVIT/attendance-app-backend/infra/logger"
+	"github.com/anirudhgray/mood-harbour-backend/infra/logger"
 	"github.com/spf13/viper"
 )
 

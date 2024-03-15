@@ -1,4 +1,4 @@
-module github.com/GDGVIT/attendance-app-backend
+module github.com/anirudhgray/mood-harbour-backend
 
 go 1.19
 

@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"github.com/GDGVIT/attendance-app-backend/models"
+	"github.com/anirudhgray/mood-harbour-backend/models"
 	"github.com/golang/mock/gomock"
 )
 

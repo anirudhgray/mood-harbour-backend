@@ -3,10 +3,10 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/GDGVIT/attendance-app-backend/infra/logger"
-	"github.com/GDGVIT/attendance-app-backend/models"
-	"github.com/GDGVIT/attendance-app-backend/repository"
-	"github.com/GDGVIT/attendance-app-backend/utils/token"
+	"github.com/anirudhgray/mood-harbour-backend/infra/logger"
+	"github.com/anirudhgray/mood-harbour-backend/models"
+	"github.com/anirudhgray/mood-harbour-backend/repository"
+	"github.com/anirudhgray/mood-harbour-backend/utils/token"
 	"github.com/gin-gonic/gin"
 )
 

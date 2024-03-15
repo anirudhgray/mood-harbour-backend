@@ -1,8 +1,8 @@
 package migrations
 
 import (
-	"github.com/GDGVIT/attendance-app-backend/infra/database"
-	"github.com/GDGVIT/attendance-app-backend/models"
+	"github.com/anirudhgray/mood-harbour-backend/infra/database"
+	"github.com/anirudhgray/mood-harbour-backend/models"
 )
 
 // Migrate Add list of model add for migrations
