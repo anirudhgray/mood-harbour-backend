@@ -15,6 +15,15 @@ func NewUserRepository() *UserRepository {
 	return &UserRepository{database.DB}
 }
 
+type UserRepositoryInterface interface {
+	CreateUser(user models.User) error
+	GetUserByEmail(email string) (models.User, error)
+	GetUserByID(userID uint) (models.User, error)
+	VerifyUserEmail(email string) error
+	SaveUser(user models.User) error
+	DeleteUserByID(userID uint) error
+}
+
 func (ur *UserRepository) CreateUser(user models.User) error {
 	if err := ur.db.Create(&user).Error; err != nil {
 		logger.Errorf("DB: Error Creating User: %v", err)

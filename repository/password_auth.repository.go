@@ -14,6 +14,14 @@ func NewPasswordAuthRepository() *PasswordAuthRepository {
 	return &PasswordAuthRepository{database.DB}
 }
 
+type PasswordAuthRepositoryInterface interface {
+	CreatePwdAuthItem(passwordAuth *models.PasswordAuth) error
+	GetPwdAuthItemByEmail(email string) (models.PasswordAuth, error)
+	UpdatePwdAuthItem(passwordAuth models.PasswordAuth) error
+	DeletePwdAuthItem(id uint) error
+	DeletePwdAuthItemByEmail(email string) error
+}
+
 // CreateUser creates a new PasswordAuth record.
 func (par *PasswordAuthRepository) CreatePwdAuthItem(passwordAuth *models.PasswordAuth) error {
 	return par.db.Create(passwordAuth).Error

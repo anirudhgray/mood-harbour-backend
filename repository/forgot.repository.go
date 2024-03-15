@@ -16,6 +16,12 @@ func NewForgotPasswordRepository() *ForgotPasswordRepository {
 	return &ForgotPasswordRepository{database.DB}
 }
 
+type ForgotPasswordRepositoryInterface interface {
+	CreateForgotPassword(forgotPassword models.ForgotPassword) error
+	GetForgotPasswordByEmail(email string) (*models.ForgotPassword, error)
+	DeleteForgotPasswordByEmail(email string) error
+}
+
 // CreateForgotPassword creates a new forgot password entry
 func (fpr *ForgotPasswordRepository) CreateForgotPassword(forgotPassword models.ForgotPassword) error {
 	if err := fpr.db.Create(&forgotPassword).Error; err != nil {

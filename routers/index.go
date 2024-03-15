@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"github.com/GDGVIT/attendance-app-backend/controllers"
+	"github.com/GDGVIT/attendance-app-backend/repository"
 	"github.com/GDGVIT/attendance-app-backend/routers/middleware"
+	"github.com/GDGVIT/attendance-app-backend/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,19 +17,29 @@ func RegisterRoutes(route *gin.Engine) {
 	})
 	route.GET("/health", func(ctx *gin.Context) { ctx.JSON(http.StatusOK, gin.H{"live": "ok"}) })
 
-	v1 := route.Group("/v1")
+	authProviderRepo := repository.NewAuthProviderRepository()
+	forgotPasswordRepo := repository.NewForgotPasswordRepository()
+	deletionConfirmationRepo := repository.NewDeletionConfirmationRepository()
+	verificationRepo := repository.NewVerificationEntryRepository()
+	passwordAuthRepo := repository.NewPasswordAuthRepository()
+	userRepo := repository.NewUserRepository()
 
-	example := v1.Group("/example")
-	{
-		example.GET("/", controllers.GetData)
-		example.POST("/", controllers.Create)
-		example.GET("/:pid", controllers.GetSingleData)
-		example.PATCH("/:pid", controllers.Update)
-	}
+	emailService := services.NewEmailService(userRepo)
+	authService := services.NewAuthService(
+		authProviderRepo,
+		verificationRepo,
+		forgotPasswordRepo,
+		deletionConfirmationRepo,
+		passwordAuthRepo,
+		userRepo,
+		emailService,
+	)
+
+	v1 := route.Group("/v1")
 
 	auth := v1.Group("/auth") // Create an /auth/ group
 	{
-		userController := controllers.NewUserController() // Create an instance of the UserController
+		userController := controllers.NewUserController(authService) // Create an instance of the UserController
 
 		// Define the user registration route
 		auth.POST("/register", userController.RegisterUser)

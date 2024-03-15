@@ -17,6 +17,12 @@ func NewVerificationEntryRepository() *VerificationEntryRepository {
 	return &VerificationEntryRepository{database.DB}
 }
 
+type VerificationRepositoryInterface interface {
+	CreateVerificationEntry(verificationEntry models.VerificationEntry) error
+	GetVerificationEntryByEmail(email string) (*models.VerificationEntry, error)
+	DeleteVerificationEntry(email string) error
+}
+
 // CreateVerificationEntry creates a new verification entry
 func (ver *VerificationEntryRepository) CreateVerificationEntry(verificationEntry models.VerificationEntry) error {
 	if err := ver.db.Create(&verificationEntry).Error; err != nil {

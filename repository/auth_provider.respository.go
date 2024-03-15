@@ -14,6 +14,15 @@ func NewAuthProviderRepository() *AuthProviderRepository {
 	return &AuthProviderRepository{database.DB}
 }
 
+type AuthProviderRepositoryInterface interface {
+	CreateAuthProvider(authProvider models.AuthProvider) error
+	GetAuthProviderByID(id uint) (models.AuthProvider, error)
+	GetAuthProviderByProviderKey(providerKey string) (models.AuthProvider, error)
+	UpdateAuthProvider(authProvider models.AuthProvider) error
+	DeleteAuthProvider(id uint) error
+	DeleteAuthProviderByUserID(userID uint) error
+}
+
 // CreateAuthProvider creates a new AuthProvider record.
 func (ar *AuthProviderRepository) CreateAuthProvider(authProvider models.AuthProvider) error {
 	return ar.db.Create(&authProvider).Error

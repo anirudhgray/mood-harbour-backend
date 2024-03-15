@@ -14,6 +14,12 @@ func NewDeletionConfirmationRepository() *DeletionConfirmationRepository {
 	return &DeletionConfirmationRepository{database.DB}
 }
 
+type DeletionConfirmationRepositoryInterface interface {
+	CreateDeletionConfirmation(deletionConfirmation models.DeletionConfirmation) error
+	GetDeletionConfirmationByEmail(email string) (models.DeletionConfirmation, error)
+	DeleteDeletionConfirmationByEmail(email string) error
+}
+
 // CreateDeletionConfirmation creates a new deletion confirmation entry
 func (dcr *DeletionConfirmationRepository) CreateDeletionConfirmation(deletionConfirmation models.DeletionConfirmation) error {
 	if err := dcr.db.Create(&deletionConfirmation).Error; err != nil {
