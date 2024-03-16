@@ -19,11 +19,15 @@ type MoodRepositoryInterface interface {
 	GetMoodsByUserID(userID uint) ([]models.Mood, error)
 	GetMoodsByUserIDAndMoodType(userID uint, moodType models.MoodType) ([]models.Mood, error)
 	GetMoodsByUserIDAndDateRange(userID uint, startDate, endDate string) ([]models.Mood, error)
+	GetMoodsByUserIDAndMoodTypeAndDateRange(userID uint, moodType models.MoodType, startDate, endDate string) ([]models.Mood, error)
 	GetMoodByID(moodID uint) (models.Mood, error)
 	GetMoodAttributesByMoodID(moodID uint) ([]models.MoodAttribute, error)
 	DeleteMood(moodID uint) error
 	CreateNewAttribute(attribute *models.Attribute) error
 	CreateMoodAttributeEntry(moodAttribute *models.MoodAttribute) error
+	GetAttributeByID(attributeID uint) (models.Attribute, error)
+	DeleteMoodAttributeByMoodID(moodID uint) error
+	UpdateMoodEntry(mood *models.Mood) error
 }
 
 // CreateMoodEntry creates a new mood entry in the database.
@@ -49,6 +53,13 @@ func (mr *MoodRepository) GetMoodsByUserIDAndMoodType(userID uint, moodType mode
 func (mr *MoodRepository) GetMoodsByUserIDAndDateRange(userID uint, startDate, endDate string) ([]models.Mood, error) {
 	var moods []models.Mood
 	err := mr.db.Where("user_id = ? AND DATE(created_at) BETWEEN ? AND ?", userID, startDate, endDate).Find(&moods).Error
+	return moods, err
+}
+
+// GetMoodsByUserIDAndMoodTypeAndDateRange gets all the mood entries for a specific user and mood type within a date range.
+func (mr *MoodRepository) GetMoodsByUserIDAndMoodTypeAndDateRange(userID uint, moodType models.MoodType, startDate, endDate string) ([]models.Mood, error) {
+	var moods []models.Mood
+	err := mr.db.Where("user_id = ? AND mood = ? AND DATE(created_at) BETWEEN ? AND ?", userID, moodType, startDate, endDate).Find(&moods).Error
 	return moods, err
 }
 
@@ -79,4 +90,21 @@ func (mr *MoodRepository) CreateNewAttribute(attribute *models.Attribute) error 
 // CreateMoodAttributeEntry creates a new entry in the MoodAttribute table which associates an attribute with a mood entry.
 func (mr *MoodRepository) CreateMoodAttributeEntry(moodAttribute *models.MoodAttribute) error {
 	return mr.db.Create(moodAttribute).Error
+}
+
+// GetAttributeByID gets a specific attribute by its ID.
+func (mr *MoodRepository) GetAttributeByID(attributeID uint) (models.Attribute, error) {
+	var attribute models.Attribute
+	err := mr.db.First(&attribute, attributeID).Error
+	return attribute, err
+}
+
+// DeleteMoodAttributeByMoodID deletes all the attributes associated with a specific mood entry
+func (mr *MoodRepository) DeleteMoodAttributeByMoodID(moodID uint) error {
+	return mr.db.Where("mood_id = ?", moodID).Delete(&models.MoodAttribute{}).Error
+}
+
+// UpdateMoodEntry updates a specific mood entry in the database.
+func (mr *MoodRepository) UpdateMoodEntry(mood *models.Mood) error {
+	return mr.db.Save(mood).Error
 }

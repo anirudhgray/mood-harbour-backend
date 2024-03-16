@@ -46,10 +46,6 @@ type MoodAttribute struct {
 // MoodResponse represents the response body for a single mood entry.
 type MoodResponse struct {
 	ID         uint        `json:"id"`
-	UserID     uint        `json:"user_id"`
-	Mood       MoodType    `json:"mood"`
-	Notes      string      `json:"notes"`
+	Mood       Mood        `json:"mood"`
 	Attributes []Attribute `json:"attributes"`
-	CreatedAt  string      `json:"created_at"`
-	UpdatedAt  string      `json:"updated_at"`
 }
