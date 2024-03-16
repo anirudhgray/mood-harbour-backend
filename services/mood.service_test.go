@@ -124,7 +124,10 @@ func TestMoodService_CreateMoodEntry(t *testing.T) {
 	mockMoodRepo.EXPECT().GetMoodAttributesByMoodID(gomock.Any()).Return([]models.MoodAttribute{{AttributeID: 1}, {AttributeID: 2}}, nil)
 	mockMoodRepo.EXPECT().GetAttributeByID(gomock.Any()).Return(models.Attribute{}, nil).Times(2)
 
-	moodResponse := ms.CreateMoodEntry(moodType, notes, userID, attributes)
+	moodResponse, err := ms.CreateMoodEntry(moodType, notes, userID, attributes)
+	if err != nil {
+		t.Errorf("CreateMoodEntry returned an error: %v", err)
+	}
 
 	if moodResponse.Mood.Mood != moodType || moodResponse.Mood.Notes != notes || moodResponse.Mood.UserID != userID {
 		t.Errorf("CreateMoodEntry returned incorrect mood")

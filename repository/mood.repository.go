@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/anirudhgray/mood-harbour-backend/infra/database"
 	"github.com/anirudhgray/mood-harbour-backend/models"
 	"gorm.io/gorm"
 )
@@ -9,8 +10,8 @@ type MoodRepository struct {
 	db *gorm.DB
 }
 
-func NewMoodRepository(db *gorm.DB) *MoodRepository {
-	return &MoodRepository{db}
+func NewMoodRepository() *MoodRepository {
+	return &MoodRepository{database.DB}
 }
 
 // MoodRepositoryInterface is the interface for the MoodRepository.

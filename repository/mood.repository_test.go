@@ -17,7 +17,8 @@ func TestMoodRepository_CreateMoodEntry(t *testing.T) {
 	defer db.Migrator().DropTable(&models.Mood{})
 
 	// Create the MoodRepository with the test database
-	mr := NewMoodRepository(db)
+	mr := NewMoodRepository()
+	mr.db = db
 
 	// Create a test mood entry
 	mood := models.Mood{
@@ -51,7 +52,8 @@ func TestMoodRepository_GetMoodsByUserID(t *testing.T) {
 	defer db.Migrator().DropTable(&models.Mood{})
 
 	// Create the MoodRepository with the test database
-	mr := NewMoodRepository(db)
+	mr := NewMoodRepository()
+	mr.db = db
 
 	// Create test mood entries
 	moods := []models.Mood{
@@ -94,7 +96,8 @@ func TestMoodRepository_GetMoodsByUserIDAndDateRange(t *testing.T) {
 	defer db.Migrator().DropTable(&models.Mood{})
 
 	// Create the MoodRepository with the test database
-	mr := NewMoodRepository(db)
+	mr := NewMoodRepository()
+	mr.db = db
 
 	// Create test mood entries
 	// Create test mood entries

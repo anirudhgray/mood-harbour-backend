@@ -23,6 +23,7 @@ func RegisterRoutes(route *gin.Engine) {
 	verificationRepo := repository.NewVerificationEntryRepository()
 	passwordAuthRepo := repository.NewPasswordAuthRepository()
 	userRepo := repository.NewUserRepository()
+	moodRepo := repository.NewMoodRepository()
 
 	emailService := services.NewEmailService(userRepo)
 	authService := services.NewAuthService(
@@ -34,6 +35,7 @@ func RegisterRoutes(route *gin.Engine) {
 		userRepo,
 		emailService,
 	)
+	moodService := services.NewMoodService(moodRepo)
 
 	v1 := route.Group("/v1")
 
@@ -77,4 +79,16 @@ func RegisterRoutes(route *gin.Engine) {
 		// Google Callback
 		auth.GET("/google/callback", userController.GoogleCallback)
 	}
+
+	mood := v1.Group("/mood", middleware.BaseAuthMiddleware())
+	{
+		moodController := controllers.NewMoodController(moodService)
+
+		// Create a new mood entry
+		mood.POST("/create", moodController.CreateMoodEntry)
+
+		// Update a mood entry
+		mood.PUT("/update/:id", moodController.UpdateUserMoodEntry)
+	}
+
 }

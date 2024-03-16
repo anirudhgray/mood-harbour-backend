@@ -14,7 +14,7 @@ func NewMoodService(moodRepo repository.MoodRepositoryInterface) *MoodService {
 }
 
 type MoodServiceInterface interface {
-	CreateMoodEntry(moodType models.MoodType, notes string, userID uint, attributes []string) models.MoodResponse
+	CreateMoodEntry(moodType models.MoodType, notes string, userID uint, attributes []string) (models.MoodResponse, error)
 	GetUserMoodEntries(userID uint, moodType *models.MoodType, startDate, endDate *string) ([]models.MoodResponse, error)
 	GetSingleUserMoodEntry(userID, moodID uint) (models.MoodResponse, error)
 	DeleteMoodEntry(userID, moodID uint) error
@@ -23,7 +23,7 @@ type MoodServiceInterface interface {
 }
 
 // CreateMoodEntry creates a new mood entry in the database.
-func (ms *MoodService) CreateMoodEntry(moodType models.MoodType, notes string, userID uint, attributes []string) models.MoodResponse {
+func (ms *MoodService) CreateMoodEntry(moodType models.MoodType, notes string, userID uint, attributes []string) (models.MoodResponse, error) {
 	mood := models.Mood{
 		UserID: userID,
 		Mood:   moodType,
@@ -32,14 +32,14 @@ func (ms *MoodService) CreateMoodEntry(moodType models.MoodType, notes string, u
 
 	err := ms.moodRepo.CreateMoodEntry(&mood)
 	if err != nil {
-		return models.MoodResponse{}
+		return models.MoodResponse{}, err
 	}
 
 	for _, attr := range attributes {
 		attribute := models.Attribute{Name: attr}
 		err = ms.moodRepo.CreateNewAttribute(&attribute)
 		if err != nil {
-			return models.MoodResponse{}
+			return models.MoodResponse{}, err
 		}
 
 		moodAttribute := models.MoodAttribute{
@@ -48,13 +48,13 @@ func (ms *MoodService) CreateMoodEntry(moodType models.MoodType, notes string, u
 		}
 		err = ms.moodRepo.CreateMoodAttributeEntry(&moodAttribute)
 		if err != nil {
-			return models.MoodResponse{}
+			return models.MoodResponse{}, err
 		}
 	}
 
 	moodAttributes, err := ms.moodRepo.GetMoodAttributesByMoodID(mood.ID)
 	if err != nil {
-		return models.MoodResponse{}
+		return models.MoodResponse{}, err
 	}
 
 	// for each moodAttr get the attribute
@@ -62,7 +62,7 @@ func (ms *MoodService) CreateMoodEntry(moodType models.MoodType, notes string, u
 	for _, moodAttr := range moodAttributes {
 		attribute, err := ms.moodRepo.GetAttributeByID(moodAttr.AttributeID)
 		if err != nil {
-			return models.MoodResponse{}
+			return models.MoodResponse{}, err
 		}
 		attributesList = append(attributesList, attribute)
 	}
@@ -71,7 +71,7 @@ func (ms *MoodService) CreateMoodEntry(moodType models.MoodType, notes string, u
 		ID:         mood.ID,
 		Mood:       mood,
 		Attributes: attributesList,
-	}
+	}, nil
 }
 
 // GetUsersMoodEntries gets all the mood entries for a specific user. Filters by mood type and date range if provided.
