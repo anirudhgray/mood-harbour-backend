@@ -13,6 +13,8 @@ type User struct {
 	Name         string `gorm:"size:255;not null;"`
 	ProfileImage string `gorm:"size:255;"`
 	Verified     bool   `gorm:"default:false"`
+	Admin        bool   `gorm:"default:false"`
+	Disabled     bool   `gorm:"default:false"`
 }
 
 type DeletionConfirmation struct {
