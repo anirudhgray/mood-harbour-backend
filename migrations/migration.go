@@ -9,7 +9,6 @@ import (
 // TODO later separate migration each models
 func Migrate() {
 	var migrationModels = []interface{}{
-		&models.Example{},
 		&models.User{},
 		&models.VerificationEntry{},
 		&models.ForgotPassword{},
