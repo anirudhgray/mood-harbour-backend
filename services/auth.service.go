@@ -63,11 +63,11 @@ func (as *AuthService) RegisterUser(email, name, profileImage, password string) 
 	var emptyUser models.User
 	if existingPwdAuth != emptyPwdAuth {
 		// email.SendRegistrationMail("Account Alert", "Someone attempted to create an account using your email. If this was you, try applying for password reset in case you have lost access to your account.", existingUser.Email, existingUser.ID, existingUser.Name, false)
-		return models.User{}, errors.New("User with that email address already exists!")
+		return models.User{}, errors.New("user with that email address already exists")
 	}
 
 	if !auth.CheckPasswordStrength(password) {
-		return models.User{}, errors.New("Password not strong enough.")
+		return models.User{}, errors.New("password not strong enough")
 	}
 
 	user := models.User{Name: name, Email: email, ProfileImage: profileImage}
@@ -116,7 +116,7 @@ func (as *AuthService) LoginUser(email, password string) (string, models.User, e
 	}
 
 	if !user.Verified {
-		return "", models.User{}, errors.New("Please verify your email before logging in.")
+		return "", models.User{}, errors.New("please verify your email before logging in")
 	}
 
 	return token, user, nil
@@ -158,7 +158,7 @@ func (as *AuthService) VerifyEmail(email string, otp string) error {
 	}
 
 	if verificationEntry.OTP != otp {
-		return errors.New("Invalid verification")
+		return errors.New("invalid verification")
 	}
 
 	// Verify the email by updating the user's verification status
@@ -206,11 +206,11 @@ func (as *AuthService) SetNewPassword(email string, otp string, newPassword stri
 	}
 
 	if forgotPasswordEntry.ValidTill.Before(time.Now()) {
-		return errors.New("Password OTP has expired, please request forgot password again")
+		return errors.New("password OTP has expired, please request forgot password again")
 	}
 
 	if forgotPasswordEntry.OTP != otp {
-		return errors.New("Invalid verification")
+		return errors.New("invalid verification")
 	}
 
 	// Fetch the user by email
@@ -225,7 +225,7 @@ func (as *AuthService) SetNewPassword(email string, otp string, newPassword stri
 	}
 
 	if !auth.CheckPasswordStrength(newPassword) {
-		return errors.New("Password not strong enough")
+		return errors.New("password not strong enough")
 	}
 
 	pwdAuth.Password = newPassword
@@ -261,11 +261,11 @@ func (as *AuthService) ResetPassword(user models.User, oldPassword string, newPa
 
 	if err := auth.VerifyPassword(oldPassword, currentPwdAuth.Password); err != nil {
 		as.emailService.GenericSendMail("Password Reset Attempt", "Somebody attempted to change your password. Secure your account if this was not you.", user.Email, user.Name)
-		return errors.New("Incorrect current password")
+		return errors.New("incorrect current password")
 	}
 
 	if !auth.CheckPasswordStrength(newPassword) {
-		return errors.New("Password not strong enough")
+		return errors.New("password not strong enough")
 	}
 
 	currentPwdAuth.Password = newPassword
@@ -310,11 +310,11 @@ func (as *AuthService) DeleteAccount(email string, otp string) error {
 	}
 
 	if deletionEntry.ValidTill.Before(time.Now()) {
-		return errors.New("Password OTP has expired, please request account deletion again")
+		return errors.New("password OTP has expired, please request account deletion again")
 	}
 
 	if deletionEntry.OTP != otp {
-		return errors.New("Invalid verification")
+		return errors.New("invalid verification")
 	}
 
 	// Fetch the user by email
