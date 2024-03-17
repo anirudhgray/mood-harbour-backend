@@ -37,7 +37,7 @@ func (ms *MoodService) CreateMoodEntry(moodType models.MoodType, notes string, u
 	}
 
 	for _, attr := range attributes {
-		attribute := models.Attribute{Name: attr}
+		attribute := models.Attribute{Name: attr, CreatedBy: userID}
 		err = ms.moodRepo.CreateNewAttribute(&attribute)
 		if err != nil {
 			return models.MoodResponse{}, err
@@ -199,7 +199,7 @@ func (ms *MoodService) UpdateUserMoodEntry(moodID uint, moodType models.MoodType
 	}
 
 	for _, attr := range attributes {
-		attribute := models.Attribute{Name: attr}
+		attribute := models.Attribute{Name: attr, CreatedBy: mood.UserID}
 		err = ms.moodRepo.CreateNewAttribute(&attribute)
 		if err != nil {
 			return err
