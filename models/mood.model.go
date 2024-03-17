@@ -32,8 +32,9 @@ type Mood struct {
 // Attribute represents a single attribute that can be associated with a mood entry. This can be anything you might want associated with a mood entry.
 type Attribute struct {
 	gorm.Model
-	Name     string            `gorm:"size:255;not null;unique"`
-	Quantity AttributeQuantity `gorm:"not null"`
+	Name      string            `gorm:"size:255;not null"`
+	Quantity  AttributeQuantity `gorm:"not null"`
+	CreatedBy uint              `gorm:"not null"` // Foreign key to the User model
 }
 
 // MoodAttribute represents the attributes of a mood entry. Many to many relationship with Mood.

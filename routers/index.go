@@ -89,6 +89,21 @@ func RegisterRoutes(route *gin.Engine) {
 
 		// Update a mood entry
 		mood.PUT("/update/:id", moodController.UpdateUserMoodEntry)
+
+		// GET mood entries for a user, filterable
+		mood.GET("/get", moodController.GetUserMoodEntries)
+
+		// GET a single mood entry
+		mood.GET("/get/:id", moodController.GetSingleUserMoodEntry)
+
+		// DELETE a mood entry
+		mood.DELETE("/delete/:id", moodController.DeleteMoodEntry)
+
+		// CREATE a new attribute
+		mood.POST("/attribute/create", moodController.CreateGenericAttribute)
+
+		// GET all attributes
+		mood.GET("/attribute/get", moodController.GetGenericAttributes)
 	}
 
 }

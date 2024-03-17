@@ -119,6 +119,21 @@ func (mr *MockMoodRepositoryInterfaceMockRecorder) GetAttributeByID(attributeID 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAttributeByID", reflect.TypeOf((*MockMoodRepositoryInterface)(nil).GetAttributeByID), attributeID)
 }
 
+// GetAttributes mocks base method.
+func (m *MockMoodRepositoryInterface) GetAttributes(userID uint) ([]models.Attribute, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAttributes", userID)
+	ret0, _ := ret[0].([]models.Attribute)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAttributes indicates an expected call of GetAttributes.
+func (mr *MockMoodRepositoryInterfaceMockRecorder) GetAttributes(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAttributes", reflect.TypeOf((*MockMoodRepositoryInterface)(nil).GetAttributes), userID)
+}
+
 // GetMoodAttributesByMoodID mocks base method.
 func (m *MockMoodRepositoryInterface) GetMoodAttributesByMoodID(moodID uint) ([]models.MoodAttribute, error) {
 	m.ctrl.T.Helper()

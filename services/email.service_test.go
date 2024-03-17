@@ -28,5 +28,3 @@ func TestEmailService_GenericSendMail(t *testing.T) {
 	// Assert that no error occurred during the execution
 	assert.NoError(t, err)
 }
-
-// TODO need to add tests

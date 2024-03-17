@@ -18,8 +18,9 @@ type MoodServiceInterface interface {
 	GetUserMoodEntries(userID uint, moodType *models.MoodType, startDate, endDate *string) ([]models.MoodResponse, error)
 	GetSingleUserMoodEntry(userID, moodID uint) (models.MoodResponse, error)
 	DeleteMoodEntry(userID, moodID uint) error
-	CreateNewAttribute(attribute string) error
+	CreateNewAttribute(attribute string, userID uint) error
 	UpdateUserMoodEntry(moodID uint, moodType models.MoodType, notes string, attributes []string) error
+	GetGenericAttributes(userID uint) ([]models.Attribute, error)
 }
 
 // CreateMoodEntry creates a new mood entry in the database.
@@ -76,7 +77,7 @@ func (ms *MoodService) CreateMoodEntry(moodType models.MoodType, notes string, u
 
 // GetUsersMoodEntries gets all the mood entries for a specific user. Filters by mood type and date range if provided.
 func (ms *MoodService) GetUserMoodEntries(userID uint, moodType *models.MoodType, startDate, endDate *string) ([]models.MoodResponse, error) {
-	var moods []models.MoodResponse
+	moods := make([]models.MoodResponse, 0)
 
 	moodEntries := []models.Mood{}
 	err := error(nil)
@@ -173,8 +174,8 @@ func (ms *MoodService) DeleteMoodEntry(userID, moodID uint) error {
 }
 
 // CreateNewAttribute creates a new attribute in the database which can now be associated with mood entries.
-func (ms *MoodService) CreateNewAttribute(attribute string) error {
-	attr := models.Attribute{Name: attribute}
+func (ms *MoodService) CreateNewAttribute(attribute string, userID uint) error {
+	attr := models.Attribute{Name: attribute, CreatedBy: userID}
 	return ms.moodRepo.CreateNewAttribute(&attr)
 }
 
@@ -215,4 +216,9 @@ func (ms *MoodService) UpdateUserMoodEntry(moodID uint, moodType models.MoodType
 	}
 
 	return nil
+}
+
+// GetGenericAttributes gets all the generic attributes that can be associated with mood entries.
+func (ms *MoodService) GetGenericAttributes(userID uint) ([]models.Attribute, error) {
+	return ms.moodRepo.GetAttributes(userID)
 }

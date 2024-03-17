@@ -29,6 +29,7 @@ type MoodRepositoryInterface interface {
 	GetAttributeByID(attributeID uint) (models.Attribute, error)
 	DeleteMoodAttributeByMoodID(moodID uint) error
 	UpdateMoodEntry(mood *models.Mood) error
+	GetAttributes(userID uint) ([]models.Attribute, error)
 }
 
 // CreateMoodEntry creates a new mood entry in the database.
@@ -108,4 +109,11 @@ func (mr *MoodRepository) DeleteMoodAttributeByMoodID(moodID uint) error {
 // UpdateMoodEntry updates a specific mood entry in the database.
 func (mr *MoodRepository) UpdateMoodEntry(mood *models.Mood) error {
 	return mr.db.Save(mood).Error
+}
+
+// GetAttributes gets all the attributes in the database.
+func (mr *MoodRepository) GetAttributes(userID uint) ([]models.Attribute, error) {
+	var attributes []models.Attribute
+	err := mr.db.Where("created_by = ?", userID).Find(&attributes).Error
+	return attributes, err
 }
