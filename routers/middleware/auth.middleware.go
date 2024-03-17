@@ -39,3 +39,19 @@ func BaseAuthMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+// AdminAuthMiddleware checks if the user is an admin
+func AdminAuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, _ := c.Get("user")
+		userData := user.(*models.User)
+
+		if !userData.Admin {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "auth", "message": "You are not authorized to access this resource."})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}

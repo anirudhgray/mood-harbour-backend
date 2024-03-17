@@ -18,10 +18,11 @@ func NewResourceRepository() *ResourceRepository {
 type ResourceRepositoryInterface interface {
 	CreateResource(resource *models.Resource) error
 	GetResourceByID(resourceID uint) (models.Resource, error)
+	GetResources() ([]models.Resource, error)
 	GetResourcesByUserID(userID uint) ([]models.Resource, error)
 	GetAdminResources() ([]models.Resource, error)
 	DeleteResource(resourceID uint) error
-	UpdateResource(resource *models.Resource) error
+	UpdateResource(resource *models.Resource) (models.Resource, error)
 	AddReview(resourceID uint, review *models.Review) error
 	GetReviewsByResourceID(resourceID uint) ([]models.Review, error)
 	DeleteReview(reviewID uint) error
@@ -42,6 +43,13 @@ func (rr *ResourceRepository) GetResourceByID(resourceID uint) (models.Resource,
 	return resource, err
 }
 
+// GetResources gets all the resources in the database.
+func (rr *ResourceRepository) GetResources() ([]models.Resource, error) {
+	var resources []models.Resource
+	err := rr.db.Find(&resources).Error
+	return resources, err
+}
+
 // GetResourcesByUserID gets all the resources for a specific user.
 func (rr *ResourceRepository) GetResourcesByUserID(userID uint) ([]models.Resource, error) {
 	var resources []models.Resource
@@ -52,7 +60,7 @@ func (rr *ResourceRepository) GetResourcesByUserID(userID uint) ([]models.Resour
 // GetAdminResources gets all the resources for an admin.
 func (rr *ResourceRepository) GetAdminResources() ([]models.Resource, error) {
 	var resources []models.Resource
-	err := rr.db.Find(&resources).Error
+	err := rr.db.Where("admin_post = ?", true).Find(&resources).Error
 	return resources, err
 }
 
@@ -62,8 +70,9 @@ func (rr *ResourceRepository) DeleteResource(resourceID uint) error {
 }
 
 // UpdateResource updates a resource in the database.
-func (rr *ResourceRepository) UpdateResource(resource *models.Resource) error {
-	return rr.db.Save(resource).Error
+func (rr *ResourceRepository) UpdateResource(resource *models.Resource) (models.Resource, error) {
+	err := rr.db.Save(resource).Error
+	return *resource, err
 }
 
 // AddReview adds a review to a resource.
