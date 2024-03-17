@@ -1,25 +1,29 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/anirudhgray/mood-harbour-backend/models"
 	"github.com/anirudhgray/mood-harbour-backend/repository"
 )
 
 type ResourceService struct {
 	resourceRepo repository.ResourceRepositoryInterface
+	userRepo     repository.UserRepositoryInterface
 }
 
-func NewResourceService(resourceRepo repository.ResourceRepositoryInterface) *ResourceService {
-	return &ResourceService{resourceRepo}
+func NewResourceService(resourceRepo repository.ResourceRepositoryInterface, userRepo repository.UserRepositoryInterface) *ResourceService {
+	return &ResourceService{resourceRepo, userRepo}
 }
 
 type ResourceServiceInterface interface {
 	CreateResourceEntry(userID uint, title, content, url string, external, adminPost bool) (models.ResourceResponse, error)
 	GetAllResources() ([]models.ResourceResponse, error)
 	GetResourceByID(resourceID uint) (models.ResourceResponse, error)
-	DeleteResource(resourceID uint) error
+	DeleteResource(userID, resourceID uint) error
 	UpdateResource(resourceID uint, userID uint, title, content, url string, external, adminPost bool) (models.ResourceResponse, error)
 	GetAdminResources() ([]models.ResourceResponse, error)
+	AddReview(resourceID, userID uint, content string, rating models.Rating) error
 }
 
 // CreateResourceEntry creates a new resource entry in the database.
@@ -94,7 +98,23 @@ func (rs *ResourceService) GetResourceByID(resourceID uint) (models.ResourceResp
 }
 
 // DeleteResource deletes a resource by its ID.
-func (rs *ResourceService) DeleteResource(resourceID uint) error {
+func (rs *ResourceService) DeleteResource(userID, resourceID uint) error {
+	// Check if the user is the owner of the resource or is an admin
+	resource, err := rs.resourceRepo.GetResourceByID(resourceID)
+	if err != nil {
+		return err
+	}
+
+	user, err := rs.userRepo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+
+	if resource.CreatedBy != user.ID && !user.Admin {
+		// return error unauthorized
+		return errors.New("unauthorized")
+	}
+
 	return rs.resourceRepo.DeleteResource(resourceID)
 }
 
@@ -148,4 +168,16 @@ func (rs *ResourceService) GetAdminResources() ([]models.ResourceResponse, error
 	}
 
 	return resourceResponses, nil
+}
+
+// AddReview adds a review to a resource.
+func (rs *ResourceService) AddReview(resourceID, userID uint, content string, rating models.Rating) error {
+	review := models.Review{
+		ResourceID: resourceID,
+		UserID:     userID,
+		Content:    content,
+		Rating:     rating,
+	}
+
+	return rs.resourceRepo.AddReview(resourceID, &review)
 }
