@@ -24,8 +24,12 @@ func RegisterRoutes(route *gin.Engine) {
 	passwordAuthRepo := repository.NewPasswordAuthRepository()
 	userRepo := repository.NewUserRepository()
 	moodRepo := repository.NewMoodRepository()
+	resourceRepo := repository.NewResourceRepository()
 
 	emailService := services.NewEmailService(userRepo)
+	moodService := services.NewMoodService(moodRepo)
+	resourceService := services.NewResourceService(resourceRepo, userRepo)
+
 	authService := services.NewAuthService(
 		authProviderRepo,
 		verificationRepo,
@@ -34,8 +38,8 @@ func RegisterRoutes(route *gin.Engine) {
 		passwordAuthRepo,
 		userRepo,
 		emailService,
+		moodRepo,
 	)
-	moodService := services.NewMoodService(moodRepo)
 
 	v1 := route.Group("/v1")
 
@@ -106,4 +110,23 @@ func RegisterRoutes(route *gin.Engine) {
 		mood.GET("/attribute/get", moodController.GetGenericAttributes)
 	}
 
+	resource := v1.Group("/resource", middleware.BaseAuthMiddleware())
+	{
+		resourceController := controllers.NewResourceController(resourceService)
+
+		// get reccs
+		resource.GET("/get-reccs", controllers.GenerateRecommendations)
+
+		// Create a new resource
+		resource.POST("/create", resourceController.CreateResourceEntry)
+
+		// Get all resources
+		resource.GET("/get", resourceController.GetAllResources)
+
+		// Get single resource
+		resource.GET("/get/:id", resourceController.GetResourceByID)
+
+		// Add a review to a resource
+		resource.POST("/review/add/:id", resourceController.AddReview)
+	}
 }

@@ -19,6 +19,7 @@ type AuthService struct {
 	passwordAuthRepo repository.PasswordAuthRepositoryInterface
 	userRepo         repository.UserRepositoryInterface
 	emailService     EmailServiceInterface
+	moodRepo         repository.MoodRepositoryInterface
 }
 
 // NewAuthService returns a new AuthService
@@ -30,6 +31,7 @@ func NewAuthService(
 	passwordAuthRepo repository.PasswordAuthRepositoryInterface,
 	userRepo repository.UserRepositoryInterface,
 	emailService EmailServiceInterface,
+	moodRepo repository.MoodRepositoryInterface,
 ) *AuthService {
 	return &AuthService{
 		authProviderRepo: authProviderRepo,
@@ -39,6 +41,7 @@ func NewAuthService(
 		passwordAuthRepo: passwordAuthRepo,
 		userRepo:         userRepo,
 		emailService:     emailService,
+		moodRepo:         moodRepo,
 	}
 }
 

@@ -13,6 +13,6 @@ func SetupTestDB() (*gorm.DB, error) {
 		return nil, err
 	}
 	// automigrate user and authprovider models
-	db.AutoMigrate(&models.User{}, &models.AuthProvider{}, &models.DeletionConfirmation{}, &models.VerificationEntry{}, &models.ForgotPassword{}, &models.PasswordAuth{}, &models.Mood{}, &models.MoodAttribute{}, &models.Attribute{})
+	db.AutoMigrate(&models.User{}, &models.AuthProvider{}, &models.DeletionConfirmation{}, &models.VerificationEntry{}, &models.ForgotPassword{}, &models.PasswordAuth{}, &models.Mood{}, &models.MoodAttribute{}, &models.Attribute{}, &models.Resource{}, &models.Review{})
 	return db, nil
 }

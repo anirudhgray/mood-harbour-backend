@@ -17,6 +17,8 @@ func Migrate() {
 		&models.Mood{},
 		&models.MoodAttribute{},
 		&models.Attribute{},
+		&models.Resource{},
+		&models.Review{},
 	}
 	err := database.DB.AutoMigrate(migrationModels...)
 	if err != nil {
