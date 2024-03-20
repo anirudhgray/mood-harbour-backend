@@ -114,7 +114,7 @@ func (mc *ResourceController) AddReview(c *gin.Context) {
 		return
 	}
 
-	err = mc.resourceService.AddReview(userID, uint(resourceID), reviewData.Content, reviewData.Rating)
+	err = mc.resourceService.AddReview(uint(resourceID), userID, reviewData.Content, reviewData.Rating)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "creation-error", "message": err.Error()})
 		return

@@ -42,14 +42,14 @@ func GenerateRecommendations(c *gin.Context) {
 
 	recprobs := recommender.CalculateRecommendationProbabilities(userID, unreviewed, similarities)
 
-	recommendedBooks := recommender.GetRecommendedResourcesSortedAndPaginated(recprobs, page, 20)
+	recommendedResources := recommender.GetRecommendedResourcesSortedAndPaginated(recprobs, page, 20)
 
 	var message string
-	if len(recommendedBooks) > 0 {
+	if len(recommendedResources) > 0 {
 		message = "Here are some recommendations for you."
 	} else {
 		message = "Could not get any recommendations for you. Maybe try going through the discover page and reviewing some resources?."
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": message, "recommendations": recommendedBooks})
+	c.JSON(http.StatusOK, gin.H{"message": message, "recommendations": recommendedResources})
 }
