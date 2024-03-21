@@ -30,6 +30,7 @@ type MoodRepositoryInterface interface {
 	DeleteMoodAttributeByMoodID(moodID uint) error
 	UpdateMoodEntry(mood *models.Mood) error
 	GetAttributes(userID uint) ([]models.Attribute, error)
+	GetMoodsByUserIDAndOrderedByCreatedAt(userID uint) ([]models.Mood, error)
 }
 
 // CreateMoodEntry creates a new mood entry in the database.
@@ -116,4 +117,11 @@ func (mr *MoodRepository) GetAttributes(userID uint) ([]models.Attribute, error)
 	var attributes []models.Attribute
 	err := mr.db.Where("created_by = ?", userID).Find(&attributes).Error
 	return attributes, err
+}
+
+// GetMoodsByUserIDAndOrderedByCreatedAt gets all the mood entries for a specific user ordered by created_at.
+func (mr *MoodRepository) GetMoodsByUserIDAndOrderedByCreatedAt(userID uint) ([]models.Mood, error) {
+	var moods []models.Mood
+	err := mr.db.Where("user_id = ?", userID).Order("created_at desc").Find(&moods).Error
+	return moods, err
 }

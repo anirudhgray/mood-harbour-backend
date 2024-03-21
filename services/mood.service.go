@@ -82,7 +82,7 @@ func (ms *MoodService) GetUserMoodEntries(userID uint, moodType *models.MoodType
 	moodEntries := []models.Mood{}
 	err := error(nil)
 	if moodType == nil && startDate == nil && endDate == nil {
-		moodEntries, err = ms.moodRepo.GetMoodsByUserID(userID)
+		moodEntries, err = ms.moodRepo.GetMoodsByUserIDAndOrderedByCreatedAt(userID)
 		if err != nil {
 			return nil, err
 		}
