@@ -1,5 +1,5 @@
 # Mood Harbour
-A project for my Software Engineering course. Frontend Repo at https://github.com/anirudhgray/mood-harbour-frontend
+Frontend Repo at https://github.com/anirudhgray/mood-harbour-frontend
 ## Features
 - [x] Built using Golang, Gin, Gorm and PostgreSQL.
 - [x] Dockerised via docker-compose.
